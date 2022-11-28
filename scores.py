@@ -136,7 +136,7 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         #self.setupUi(self)
         self.ui = Ui_EditScoreWindow()        
         self.ui.setupUi(self)
-        self.setFixedSize(733,553) 
+        self.setFixedSize(733,600) 
 
         self.ui.ButtSelect.clicked.connect(self.addscorerows)
         self.ui.ButtSelect.keyPressEvent = self.addscorerows
@@ -204,7 +204,7 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
             print(rowData + '\n')
         for i in sqlquery:
             print(i)
-            #db6.execute(i)
+            db6.execute(i)
 
         self.ui.lblSelectedShooter.setStyleSheet("color: red")
         current_time = QTime.currentTime()
@@ -305,6 +305,8 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         
         for i in data:
             editwindow.ui.comboBoxDate.addItem(str(i['dte']))
+        
+        editwindow.ui.lblSession.setText(window.windowTitle()) 
         editwindow.show()    
     
     

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>733</width>
-    <height>553</height>
+    <width>738</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>225</x>
-      <y>10</y>
+      <y>51</y>
       <width>286</width>
       <height>36</height>
      </rect>
@@ -33,7 +33,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>10</y>
+      <y>51</y>
       <width>166</width>
       <height>36</height>
      </rect>
@@ -51,7 +51,7 @@
     <property name="geometry">
      <rect>
       <x>515</x>
-      <y>9</y>
+      <y>50</y>
       <width>89</width>
       <height>36</height>
      </rect>
@@ -69,7 +69,7 @@
     <property name="geometry">
      <rect>
       <x>45</x>
-      <y>55</y>
+      <y>95</y>
       <width>626</width>
       <height>26</height>
      </rect>
@@ -87,7 +87,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>85</y>
+      <y>130</y>
       <width>711</width>
       <height>376</height>
      </rect>
@@ -138,7 +138,7 @@
     <property name="geometry">
      <rect>
       <x>45</x>
-      <y>470</y>
+      <y>520</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -156,7 +156,7 @@
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>470</y>
+      <y>520</y>
       <width>151</width>
       <height>25</height>
      </rect>
@@ -173,13 +173,31 @@
      <string>CANCEL/CLOSE</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lblSession">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>10</y>
+      <width>571</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>733</width>
+     <width>738</width>
      <height>22</height>
     </rect>
    </property>
