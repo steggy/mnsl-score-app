@@ -1,0 +1,466 @@
+-- MySQL dump 10.19  Distrib 10.3.37-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: 192.168.33.45    Database: mnsl
+-- ------------------------------------------------------
+-- Server version	10.1.48-MariaDB-0ubuntu0.18.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `caliber`
+--
+
+DROP TABLE IF EXISTS `caliber`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `caliber` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(60) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cert`
+--
+
+DROP TABLE IF EXISTS `cert`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cert` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `shooterid` int(11) DEFAULT NULL,
+  `valid` int(11) DEFAULT '1',
+  `dteissue` date DEFAULT NULL,
+  `dteused` date DEFAULT NULL,
+  `r1` int(11) DEFAULT '0',
+  `r2` int(11) DEFAULT '0',
+  `r3` int(11) DEFAULT '0',
+  `r4` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `certrans`
+--
+
+DROP TABLE IF EXISTS `certrans`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `certrans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `shooterid` int(11) DEFAULT NULL,
+  `dte` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `datescores`
+--
+
+DROP TABLE IF EXISTS `datescores`;
+/*!50001 DROP VIEW IF EXISTS `datescores`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `datescores` AS SELECT
+ 1 AS `id`,
+  1 AS `scoredate`,
+  1 AS `leaguenum`,
+  1 AS `shooterid`,
+  1 AS `name`,
+  1 AS `score`,
+  1 AS `event`,
+  1 AS `division`,
+  1 AS `cal` */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `division`
+--
+
+DROP TABLE IF EXISTS `division`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `division` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event`
+--
+
+DROP TABLE IF EXISTS `event`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(60) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `lastscores`
+--
+
+DROP TABLE IF EXISTS `lastscores`;
+/*!50001 DROP VIEW IF EXISTS `lastscores`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `lastscores` AS SELECT
+ 1 AS `scoredate`,
+  1 AS `leaguenum`,
+  1 AS `shooterid`,
+  1 AS `name`,
+  1 AS `score`,
+  1 AS `event`,
+  1 AS `division`,
+  1 AS `cal` */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `league`
+--
+
+DROP TABLE IF EXISTS `league`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `league` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lnum` int(11) NOT NULL,
+  `sdate` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `leaguedates`
+--
+
+DROP TABLE IF EXISTS `leaguedates`;
+/*!50001 DROP VIEW IF EXISTS `leaguedates`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `leaguedates` AS SELECT
+ 1 AS `dte`,
+  1 AS `leaguenum` */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `message`
+--
+
+DROP TABLE IF EXISTS `message`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `message` (
+  `id` int(11) NOT NULL,
+  `active` int(11) DEFAULT '0',
+  `mess` longtext,
+  `dte` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `notes`
+--
+
+DROP TABLE IF EXISTS `notes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `onote` longtext,
+  `dte` datetime DEFAULT NULL,
+  `shooterid` int(4) DEFAULT NULL,
+  `reportedby` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `offence`
+--
+
+DROP TABLE IF EXISTS `offence`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `offence` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `olist` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `owe`
+--
+
+DROP TABLE IF EXISTS `owe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `owe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dte` date NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `amnt` varchar(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `redue`
+--
+
+DROP TABLE IF EXISTS `redue`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `redue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `event` varchar(5) NOT NULL,
+  `cal` varchar(10) NOT NULL,
+  `rdiv` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `registration`
+--
+
+DROP TABLE IF EXISTS `registration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `registration` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `pos` int(11) NOT NULL,
+  `event` int(11) NOT NULL,
+  `rdiv` varchar(255) NOT NULL,
+  `cal` varchar(10) NOT NULL,
+  `wdate` date NOT NULL,
+  `score` varchar(11) NOT NULL,
+  `tstamp` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10165 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `scores`
+--
+
+DROP TABLE IF EXISTS `scores`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `scores` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dte` date NOT NULL,
+  `leaguenum` decimal(10,0) NOT NULL,
+  `score` decimal(10,0) NOT NULL,
+  `shooterid` decimal(10,0) NOT NULL,
+  `eid` int(11) NOT NULL,
+  `did` int(11) NOT NULL,
+  `cal` varchar(25) NOT NULL,
+  `nc` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=20087 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `scorestwo`
+--
+
+DROP TABLE IF EXISTS `scorestwo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `scorestwo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dte` date NOT NULL,
+  `leaguenum` decimal(10,0) NOT NULL,
+  `score` int(5) NOT NULL,
+  `shooterid` decimal(10,0) NOT NULL,
+  `eid` int(11) NOT NULL,
+  `did` int(11) NOT NULL,
+  `cal` varchar(25) NOT NULL,
+  `nc` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5578 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `shooters`
+--
+
+DROP TABLE IF EXISTS `shooters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `shooters` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fname` varchar(255) NOT NULL,
+  `lname` varchar(255) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(25) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `state` varchar(5) DEFAULT NULL,
+  `zip` varchar(25) DEFAULT NULL,
+  `gender` int(11) DEFAULT '1',
+  `junior` int(11) DEFAULT '0',
+  `staff` int(11) NOT NULL DEFAULT '0',
+  `newrules` int(3) NOT NULL DEFAULT '1',
+  `dte` datetime NOT NULL,
+  `notes` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=607 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `special`
+--
+
+DROP TABLE IF EXISTS `special`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `special` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lnum` int(11) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tonight`
+--
+
+DROP TABLE IF EXISTS `tonight`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tonight` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `wdate` date NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `pos` int(11) NOT NULL,
+  `event` int(11) NOT NULL,
+  `cs` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1771 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `tonightscore`
+--
+
+DROP TABLE IF EXISTS `tonightscore`;
+/*!50001 DROP VIEW IF EXISTS `tonightscore`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `tonightscore` AS SELECT
+ 1 AS `id`,
+  1 AS `name`,
+  1 AS `pos`,
+  1 AS `event`,
+  1 AS `rdiv`,
+  1 AS `cal`,
+  1 AS `wdate`,
+  1 AS `score` */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `datescores`
+--
+
+/*!50001 DROP VIEW IF EXISTS `datescores`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`steggy`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `datescores` AS select `scores`.`id` AS `id`,`scores`.`dte` AS `scoredate`,`scores`.`leaguenum` AS `leaguenum`,`scores`.`shooterid` AS `shooterid`,concat_ws(' ',`shooters`.`fname`,`shooters`.`lname`) AS `name`,`scores`.`score` AS `score`,`event`.`name` AS `event`,`division`.`name` AS `division`,`scores`.`cal` AS `cal` from (((`scores` join `shooters`) join `event`) join `division`) where ((`scores`.`shooterid` = `shooters`.`id`) and (`scores`.`eid` = `event`.`id`) and (`scores`.`did` = `division`.`id`)) order by `shooters`.`fname` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `lastscores`
+--
+
+/*!50001 DROP VIEW IF EXISTS `lastscores`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`steggy`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `lastscores` AS select `scores`.`dte` AS `scoredate`,`scores`.`leaguenum` AS `leaguenum`,`scores`.`shooterid` AS `shooterid`,concat_ws(' ',`shooters`.`fname`,`shooters`.`lname`) AS `name`,`scores`.`score` AS `score`,`event`.`name` AS `event`,`division`.`name` AS `division`,`scores`.`cal` AS `cal` from (((`scores` join `shooters`) join `event`) join `division`) where ((`scores`.`dte` = (select max(`scores`.`dte`) from `scores`)) and (`scores`.`shooterid` = `shooters`.`id`) and (`scores`.`eid` = `event`.`id`) and (`scores`.`did` = `division`.`id`)) order by `shooters`.`fname` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `leaguedates`
+--
+
+/*!50001 DROP VIEW IF EXISTS `leaguedates`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`steggy`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `leaguedates` AS select `scores`.`dte` AS `dte`,`scores`.`leaguenum` AS `leaguenum` from `scores` group by `scores`.`dte` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `tonightscore`
+--
+
+/*!50001 DROP VIEW IF EXISTS `tonightscore`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = latin1 */;
+/*!50001 SET character_set_results     = latin1 */;
+/*!50001 SET collation_connection      = latin1_swedish_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`mnsl`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `tonightscore` AS select `registration`.`id` AS `id`,`registration`.`name` AS `name`,`registration`.`pos` AS `pos`,`registration`.`event` AS `event`,`registration`.`rdiv` AS `rdiv`,`registration`.`cal` AS `cal`,`registration`.`wdate` AS `wdate`,`registration`.`score` AS `score` from `registration` where (`registration`.`wdate` = (select max(`registration`.`wdate`) from `registration`)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-11-28 12:50:57
