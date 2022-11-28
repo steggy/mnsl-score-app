@@ -122,6 +122,7 @@ class ViewScoresWindow(QtWidgets.QMainWindow, Ui_ViewScoresWindow):
         except Exception as e:
             print("DB Error ", e)
         
+        viewwindow.ui.lblSession.setText(window.windowTitle()) 
         
         viewwindow.show()    
 
@@ -392,16 +393,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             with open(configfile, 'w') as f:
                 for line in lines:
                     f.write(f"{line}\n")
-            print(lines)
+            #print(lines)
             read_config()
             self.ui.frameConfig.hide()
+            self.setWindowTitle(f"MNSL Scores - Session {session} Started ({findSessionStart()})")
 
         try:
             if e.key() == QtCore.Qt.Key_Return:
                 print('got enter')
                 saveC()
         except:
-            print('no key')
+            pass
+            #print('no key')
         saveC()    
     
     def closeconfig(self, e):
@@ -738,6 +741,7 @@ def adjustsession(ss):
         for line in configlines:
             f.write(f"{line}\n")
     #window.ui.framesessioncheck.hide()
+    window.setWindowTitle(f"MNSL Scores - Session {session} Started ({findSessionStart()})")
 
 
 def findSessionStart():
