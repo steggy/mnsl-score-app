@@ -7,8 +7,10 @@ class Config():
     def Fetch(self,sect):
         config = ConfigParser()
         config.read(self.cfile)
-        out = [tup[1] for tup in list(config.items(sect))]
-        return out
+        #out = [tup[1] for tup in list(config.items(sect))]
+        #return out
+        return list(config.items(sect))
+
 
     def Update(self,sect,keyvaluedict):
         config = ConfigParser()

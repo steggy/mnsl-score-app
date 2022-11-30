@@ -2,6 +2,7 @@
 import sys, time, os, json
 from datetime import datetime
 import dbhelper as DB
+import readwriteconfig as CF
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QAction, QCompleter, QLineEdit, QStyledItemDelegate, QComboBox
 from PyQt5.QtWidgets import QDialog, QPushButton, QDialogButtonBox, QVBoxLayout, QLabel
 from PyQt5 import QtWidgets, uic, QtCore, QtGui
@@ -9,11 +10,20 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QTimer, QTime, QDate
 
 configfile = "scores.conf"
+#configlist = CF.Config(configfile).Fetch('database')
+configdict = dict(CF.Config(configfile).Fetch('database'))
+configlist = list(configdict.values())
+session = str(CF.Config(configfile).Fetch('session')[0][1])
+print(configdict)
+print(configlist)
+
 dbhost = ""
 dbuser = ""
 dbpass = ""
 dbdb = ""
-session = ""
+#session = str(CF.Config(configfile).Fetch('session')[0]['session'])
+print("This is SESSION" ,session)
+
 scoredate = ""
 eventdict = {"PPC":1,"Tyro":2,"Rifle":3}
 divdict = {"Open":1,"22":2,"Prod":3,"Revolver":4,"special":5}
@@ -147,15 +157,7 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         self.ui.tblScores.setItemDelegateForColumn(2, delegate)
         self.ui.ButtUpdate.clicked.connect(self.UpdateScores)
 
-    """def loadedit(self):
-        estring = self.ui.comboBoxResults.currentText()
-        sitems = estring.split()
-        print(sitems[0].strip('()'))
-        self.ui.row0id.setText(sitems[0].strip('()'))
-        print(sitems[3])
-        self.ui.row0event.addItems(['PPC','Tyro','Rifle'])
-        print('INDEX ' ,self.ui.row0event.findText(sitems[3]))
-        self.ui.row0event.setCurrentIndex(self.ui.row0event.findText(sitems[3]))"""
+    
     
     def closeEvent(self, event):
         self.ui.lnEditScoreShooterName.setText('')
@@ -193,6 +195,7 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
                     if len(cellitem.text()) < 1:
                         print('score blank')
                         rowData = "delete from scores"
+                        
                     else:
                         rowData = rowData + ',score=' + cellitem.text()
 
@@ -205,7 +208,8 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         for i in sqlquery:
             print(i)
             db6.execute(i)
-
+            window.ui.history.append(i)
+        
         self.ui.lblSelectedShooter.setStyleSheet("color: red")
         current_time = QTime.currentTime()
 
@@ -353,6 +357,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.Buttokayerrormsg.clicked.connect(self.closeerrorbox)
         #self.ui.editpersonokayButton.keyPressEvent = self.openshooteredit
         self.ui.ButtSelectShooter.keyPressEvent = self.fillshooteredit
+        self.ui.ButtSelectShooter.clicked.connect(self.fillshooteredit)
         #self.ui.ButtEditShooterCancel.
         #self.ui.lnEditShooter.focusInEvent(self.clearshooteredit)
         self.ui.ButtEditShooterCancel.keyPressEvent = self.clearshooteredit
@@ -367,14 +372,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.ButtCalCancel.clicked.connect(lambda: self.ui.frameCal.hide())
         self.ui.ButtCalCancel.keyPressEvent = self.ui.frameCal.hide()
         
-        #'''dlg = CustomDialog(self)
-        ##dlg.exec_()
-        #if dlg.exec():
-        #    print("Success!")
-        #else:
-        #    print("Cancel!")
-        #'''
-
+        
     def updateDate(self):
         global scoredate
         thedate = self.ui.calendarWidget.selectedDate()
@@ -385,29 +383,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.frameCal.hide()
 
     def SaveConfig(self, e):
-        def saveC():
-            lines = ['db_user=' + self.ui.lnConfigUser.text(),
-            'db_pw=' + self.ui.lnConfigPass.text(),
-            'db=' + self.ui.lnConfigDB.text(),
-            'dbhost=' + self.ui.lnConfigDBHost.text(),
-            'session=' + self.ui.lnConfigSession.text()]
-        
-            with open(configfile, 'w') as f:
-                for line in lines:
-                    f.write(f"{line}\n")
-            #print(lines)
-            read_config()
-            self.ui.frameConfig.hide()
-            self.setWindowTitle(f"MNSL Scores - Session {session} Started ({findSessionStart()})")
-
-        try:
-            if e.key() == QtCore.Qt.Key_Return:
-                print('got enter')
-                saveC()
-        except:
+        if not e:
             pass
-            #print('no key')
-        saveC()    
+        else:
+            try:
+                if e.key() == QtCore.Qt.Key_Return or e.key() == QtCore.Qt.Key_Enter:
+                    pass
+                else:
+                    return
+            except:
+                print('No Key')
+                return
+        
+        linedict = {'db_user':str(self.ui.lnConfigUser.text()),
+                'db_pw':self.ui.lnConfigPass.text(),
+                'db':self.ui.lnConfigDB.text(),
+                'dbhost':self.ui.lnConfigDBHost.text()}
+        sdict = {'session':self.ui.lnConfigSession.text()}
+        CF.Config(configfile).Update('session',sdict)
+        CF.Config(configfile).Update('database',linedict)
+        read_config()
+        self.ui.frameConfig.hide()
+        self.setWindowTitle(f"MNSL Scores - Session {session} Started ({findSessionStart()})")
+
+            
     
     def closeconfig(self, e):
         try:
@@ -420,10 +419,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     
     def showconfig(self):
         self.ui.frameConfig.show()
-        self.ui.lnConfigUser.setText(dbuser)
-        self.ui.lnConfigPass.setText(dbpass)
-        self.ui.lnConfigDB.setText(dbdb)
-        self.ui.lnConfigDBHost.setText(dbhost)
+        self.ui.lnConfigUser.setText(configdict['db_user'])
+        self.ui.lnConfigPass.setText(configdict['db_pw'])
+        self.ui.lnConfigDB.setText(configdict['db'])
+        self.ui.lnConfigDBHost.setText(configdict['dbhost'])
         self.ui.lnConfigSession.setText(session)
         self.ui.lnConfigUser.setFocus()
         
@@ -435,7 +434,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ui.lnEditShooterLast.setText('')
             self.ui.lnEditShooterId.setText('')
             self.ui.frameEditShooter.hide()
-
+            self.ui.lnEditShooterEmail.setText('')
+            self.ui.lnEditShooterPhone.setText('')
+            self.ui.lblEditShooterJoinedDate.setText('')
         try:
             if e.key() == QtCore.Qt.Key_Return:
                 print('got enter')
@@ -465,7 +466,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         staff = 1 if self.ui.checkBoxStaff.checkState() > 0 else 0
         junior = 1 if self.ui.checkBoxJunior.checkState() > 0 else 0
         print(lname, gen, staff, junior)
-        sql =f"update shooters set fname='{fname.title()}',lname='{lname.title()}', gender={gen},junior={junior},staff={staff} where id={id}" 
+        
+        sql =f"""update shooters set fname='{fname.title()}',lname='{lname.title()}', 
+        gender={gen},junior={junior},staff={staff},email='{self.ui.lnEditShooterEmail.text()}' 
+        where id={id}""" 
         print(sql)
         db2 = DB.dbh(dbhost,dbuser,dbpass,dbdb)
         db2.execute(sql)
@@ -475,12 +479,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
     def fillshooteredit(self,e):
+        if not e:
+            pass
+        else:    
+            try:
+                if e.key() == QtCore.Qt.Key_Return or e.key() == QtCore.Qt.Key_Enter:
+                    pass
+                else:
+                    return
+            except:
+                print('no key')
+                return
+        
         if self.ui.lnEditShooter.text() == '':
             pass
         else:
             Shooter = self.ui.lnEditShooter.text()
-        db2 = DB.dbh(dbhost,dbuser,dbpass,dbdb)
-        sql = "select id,fname,lname,gender,junior,staff from shooters where concat(fname, ' ',lname) ='" + Shooter + "';"
+        db2 = DB.dbh(*configlist)
+        sql = "select id,dte,fname,lname,gender,junior,staff,email,phone from shooters where concat(fname, ' ',lname) ='" + Shooter + "';"
         try:
             data = db2.fetch(sql)
             #return data
@@ -493,6 +509,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ui.comboBoxGender.setCurrentIndex(data[0]['gender'])
             self.ui.checkBoxJunior.setChecked(data[0]['junior'])
             self.ui.checkBoxStaff.setChecked(data[0]['staff'])
+            self.ui.lnEditShooterEmail.setText(data[0]['email'])
+            self.ui.lnEditShooterPhone.setText(data[0]['phone'])
+            self.ui.lblEditShooterJoinedDate.setText(str(data[0]['dte']))
             self.ui.ButtUpdateShooter.setEnabled(1)
             print(self.ui.checkBoxStaff.checkState())
         except Exception as e:
@@ -661,12 +680,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         #print(self.ui.divcomboBox.currentText())
     
-    def SelectShooter(self):
+    def SelectShooter(self,e):
+        
         window.ui.lnEditShooter.setFocus()
         print('EDIT Person')
-        window.ui.frameEditShooter.move(100,100)
+        window.ui.frameEditShooter.move(100,80)
         window.ui.frameEditShooter.show()
-    
     
 
 
@@ -675,7 +694,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 def get_shooters():
     shooterlist = []
-    db2 = DB.dbh(dbhost,dbuser,dbpass,dbdb)
+    db2 = DB.dbh(*configlist)
     sql = "select concat(fname, ' ', lname) as name from shooters;"
     try:
         data = db2.fetch(sql)
@@ -687,7 +706,7 @@ def get_shooters():
 
 def loadcaliber():
     caliberlist = []
-    db2 = DB.dbh(dbhost,dbuser,dbpass,dbdb)
+    db2 = DB.dbh(*configlist)
     sql = "select name from caliber;"
     try:
         data = db2.fetch(sql)
@@ -698,19 +717,13 @@ def loadcaliber():
     return caliberlist
 
 def read_config():
-    global dbuser
-    global dbpass
-    global dbdb
-    global dbhost
+    global configlist
+    global configdict
     global session
-    with open(configfile) as file:
-        lines = file.readlines()
-    configlines = [line.rstrip() for line in lines]
-    dbuser = configlines[0].split('=')[1].strip()
-    dbpass = configlines[1].split('=')[1].strip()
-    dbdb = configlines[2].split('=')[1].strip()
-    dbhost = configlines[3].split('=')[1].strip()
-    session = configlines[4].split('=')[1].strip()
+    configdict = dict(CF.Config(configfile).Fetch('database'))
+    configlist = list(configdict.values())
+    session = str(CF.Config(configfile).Fetch('session')[0][1])
+    
 
 
 def cancel_edit_shooter():
@@ -718,7 +731,7 @@ def cancel_edit_shooter():
 
 def checksession():
     global window
-    db2 = DB.dbh(dbhost,dbuser,dbpass,dbdb)
+    db2 = DB.dbh(*configlist)
     sql = "select leaguenum from scores group by leaguenum order by leaguenum desc limit 1;"
     try:
         data = db2.fetch(sql)
@@ -747,7 +760,7 @@ def adjustsession(ss):
 
 
 def findSessionStart():
-    db2 = DB.dbh(dbhost,dbuser,dbpass,dbdb)
+    db2 = DB.dbh(*configlist)
     sql = "select min(dte) as sstart from scores where leaguenum =" + session + ";"
     data = db2.fetch(sql)
     print("Session Start " , data[0]['sstart'])
@@ -784,9 +797,7 @@ def main():
     editwindow = EditScoreWindow()
     viewwindow = ViewScoresWindow()
 
-    read_config()
     
-    newsession = checksession()
     current_date = QDate.currentDate()
 
     # converting QDate object to string
@@ -804,16 +815,6 @@ def main():
         print("DB Error in main ", e)    
     
     window.setFixedSize(900,700)
-    #shoot = get_shooters()
-    #completer = QCompleter(shoot)
-    #completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-    #window.ui.shooter.setCompleter(completer)
-    #window.ui.lnEditShooter.setCompleter(completer)
-    #editwindow.ui.lnEditScoreShooterName.setCompleter(completer)
-    #calibers = loadcaliber()
-    #compl = QCompleter(calibers)
-    #compl.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-    #window.ui.caliber.setCompleter(compl)
     LoadCompleters()
 
     window.ui.history.setFontFamily("monospace")
@@ -828,7 +829,11 @@ def main():
     
     #finSessionStart()
     window.setWindowTitle(f"MNSL Scores - Session {session} Started ({findSessionStart()})")
+    
     window.show()
+    read_config()
+    newsession = checksession()
+    
     #editwindow.show()
     
     #window.ui.editpersoncancelButton.clicked.connect(cancel_edit_shooter)

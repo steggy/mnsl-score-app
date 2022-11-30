@@ -3,3 +3,4 @@ scores.conf.org
 dialog.ui
 Dialog.py
 .scores.py.swp
+*.swp
