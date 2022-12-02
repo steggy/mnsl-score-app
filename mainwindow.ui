@@ -1070,6 +1070,7 @@ color: rgb(0, 0, 0);</string>
     </property>
     <addaction name="actionViewScores"/>
     <addaction name="actionconfig"/>
+    <addaction name="actionScores_By_Shooter"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -1148,6 +1149,11 @@ color: rgb(0, 0, 0);</string>
    </property>
    <property name="shortcut">
     <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="actionScores_By_Shooter">
+   <property name="text">
+    <string>Scores By Shooter</string>
    </property>
   </action>
  </widget>

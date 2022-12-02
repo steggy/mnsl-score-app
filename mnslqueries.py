@@ -32,12 +32,16 @@ class MNSLQuery():
     
     def FetchSessionDates(self,sess):
         #self.sess = sess
-        result = self.db2.fetch(f"select dte from scores where leaguenum = {sess} group by dte order by dte desc")
+        result = self.db2.fetch(f"select dte from scores where leaguenum like {sess} group by dte order by dte desc")
         return result
     
     def FetchSession(self):
         result = self.db2.fetch(f"select leaguenum from scores group by leaguenum order by leaguenum desc limit 1;")
         return result[0]['leaguenum']
+    
+    def FetchSessionList(self):
+        result = self.db2.fetch(f"select leaguenum from scores group by leaguenum order by leaguenum desc;")
+        return result
     
     def FetchSessionStart(self):
         result = self.db2.fetch(f"select min(dte) as sstart from scores where leaguenum ={self.session};")
@@ -91,11 +95,32 @@ class MNSLQuery():
             self.db2.execute(sql)
             return
     
-    def ScoreByShooter(self,id,dte=None,session=None):
-        if dte is not None:
-            result = self.db2.fetch(f"select * from scores where shooterid = {id} and dte ='{dte}'")
-        elif session is not None:
-            result = self.db2.fetch(f"select * from scores where shooterid = {id} and leaguenum ={session}")
-        else:
-            result = self.db2.fetch(f"select * from scores where shooterid = {id} ")
+    def FetchScoreBySSD(self,sid=None,dte=None,sess=None):
+        qvlist = [sid,dte,sess]
+        cnt = 0
+        for i in qvlist:
+            if i == '' or i == 0:
+                cnt += 1
+        if cnt == 3:
+            return 0
+        sqlh = """select (select concat(fname,' ',lname)as name from shooters where id=shooterid) as name, 
+        (select name from event where event.id=eid) as evt,
+        (select name from division where division.id=did) as divv,dte,leaguenum as lnum,cal,score """
+        sql= "from scores where"
+        qklist = ['shooterid','dte','leaguenum']
+        for i,v in enumerate(qvlist):
+            if str(qvlist[i]) != '' and str(qvlist[i]) != '0':
+                if len(sql) > 17:
+                    sql += " and"
+                if qklist[i] == 'dte':
+                    sql += f" {qklist[i]}='{qvlist[i]}'"
+                else:    
+                    sql += f" {qklist[i]}={qvlist[i]}"
+        sql += " order by dte desc"
+        sqlh += sql
+        result = self.db2.fetch(sqlh)
         return result
+
+
+
+

@@ -1,4 +1,14 @@
 #! /usr/bin/python3
+##
+## Author: Steggy
+## Gui for the MNSL score database
+## Inspired by Ira Weiny's Perl version
+##
+## Github
+## https://github.com/steggy/mnsl-score-app.git
+##
+
+
 import sys, time, os, json
 from datetime import datetime
 import readwriteconfig as CF
@@ -28,10 +38,12 @@ divdict = {"Open":1,"22":2,"Prod":3,"Revolver":4,"special":5}
 os.system("pyuic5 -x mainwindow.ui -o MainWindow.py")
 os.system("pyuic5 -x editscore.ui -o EditScore.py")
 os.system("pyuic5 -x viewscoreswindow.ui -o ViewScoresWindow.py")
+os.system("pyuic5 -x scoresbyshooter.ui -o ScoresByShooter.py")
 #from MainWindow import Ui_MainWindow
 from MainWindow import *
 from EditScore import *
 from ViewScoresWindow import *
+from ScoresByShooter import *
 
 
 class ReadOnlyDelegate(QStyledItemDelegate):
@@ -68,6 +80,75 @@ class CustomDialog(QDialog):
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
+class ScoresByShooter(QtWidgets.QMainWindow, Ui_ScoresByShooter):
+    def __init__(self, *args, obj=None, **kwargs):
+        super(ScoresByShooter, self).__init__(*args, **kwargs)
+        #self.setupUi(self)
+        self.ui = Ui_ScoresByShooter()        
+        self.ui.setupUi(self)
+        self.setFixedSize(915,600) 
+    
+        self.ui.ButtShowScores.clicked.connect(self.loadscores)
+        self.ui.lblSession.setText("Crap")
+        self.ui.comboSession.currentTextChanged.connect(self.on_session_changed)
+    
+    def on_session_changed(self):
+        if SBS.ui.comboSession.currentText() == '':
+            sess = "'%'"
+        else:
+            sess = SBS.ui.comboSession.currentText()
+    
+        SBS.ui.comboSBSDate.clear()
+        SBS.ui.comboSBSDate.addItem('')
+        dtelist = list(map(lambda x : str(x['dte']), mnslq.MNSLQuery(configfile).FetchSessionDates(sess)))
+        #print(dtelist) 
+        SBS.ui.comboSBSDate.addItems(dtelist)
+
+    def loadscores(self, e):
+        self.ui.tblScores.setColumnWidth(2,220)
+        self.ui.tblScores.clearContents()
+        self.ui.tblScores.setRowCount(0)
+        sname = self.ui.lnShooter.text()
+        dte = self.ui.comboSBSDate.currentText()
+        sess = self.ui.comboSession.currentText()
+        data = mnslq.MNSLQuery(configfile).FetchScoreBySSD(mnslq.MNSLQuery(configfile).FetchShooterId(sname),dte,sess)
+        try:
+            if len(data) < 1:
+                return
+        except:
+            return
+        self.ui.tblScores.setRowCount(len(data))
+        tblindex = 0
+        for i in data:
+            self.ui.tblScores.setItem(tblindex,0,QtWidgets.QTableWidgetItem(str(i['dte'])))
+            self.ui.tblScores.setItem(tblindex,1,QtWidgets.QTableWidgetItem(str(i['lnum'])))
+            self.ui.tblScores.setItem(tblindex,2,QtWidgets.QTableWidgetItem(str(i['name'])))
+            self.ui.tblScores.setItem(tblindex,3,QtWidgets.QTableWidgetItem(str(i['evt'])))
+            self.ui.tblScores.setItem(tblindex,4,QtWidgets.QTableWidgetItem(str(i['divv'])))
+            self.ui.tblScores.setItem(tblindex,5,QtWidgets.QTableWidgetItem(str(i['cal'])))
+            self.ui.tblScores.setItem(tblindex,6,QtWidgets.QTableWidgetItem(str(i['score'])))
+            tblindex +=1
+
+    def OpenWindow(self):
+        #self.show()
+        SBS.ui.lblSession.setText('') 
+        SBS.ui.comboSBSDate.clear() 
+        SBS.ui.tblScores.clearContents()
+        SBS.ui.tblScores.setRowCount(0)
+        #data = mnslq.MNSLQuery(configfile).FetchSessionDates(session)
+        sessdict = mnslq.MNSLQuery(configfile).FetchSessionList()
+        sesslist = list(map(lambda x : str(x['leaguenum']), sessdict))
+        SBS.ui.comboSession.addItem('')
+        SBS.ui.comboSession.addItems(sesslist)
+        
+        SBS.ui.comboSBSDate.addItem('')
+        dtelist = list(map(lambda x : str(x['dte']), mnslq.MNSLQuery(configfile).FetchSessionDates(session)))
+        #print(dtelist) 
+        #SBS.ui.comboSBSDate.addItems(dtelist)
+        #for i in data:
+        #    SBS.ui.comboSBSDate.addItem(str(i['dte']))
+        SBS.ui.lblSession.setText(window.windowTitle()) 
+        SBS.show()
 
 class ViewScoresWindow(QtWidgets.QMainWindow, Ui_ViewScoresWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -80,9 +161,9 @@ class ViewScoresWindow(QtWidgets.QMainWindow, Ui_ViewScoresWindow):
         self.ui.ButtShowScores.clicked.connect(self.loadscores)
     
     def loadscores(self, e):
-        viewwindow.ui.tblScores.setColumnWidth(0,220)
-        viewwindow.ui.tblScores.clearContents()
-        viewwindow.ui.tblScores.setRowCount(0)
+        self.ui.tblScores.setColumnWidth(0,220)
+        self.ui.tblScores.clearContents()
+        self.ui.tblScores.setRowCount(0)
         data = mnslq.MNSLQuery(configfile).FetchScoresByDate(viewwindow.ui.comboDate.currentText())
         if len(data) < 1:
             return
@@ -282,6 +363,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         editmenuc.triggered.connect(self.showconfig)
         viewmenus = self.ui.actionViewScores
         viewmenus.triggered.connect(ViewScoresWindow.OpenViewScoresWindow)
+        viewmenusbs = self.ui.actionScores_By_Shooter
+        viewmenusbs.triggered.connect(ScoresByShooter.OpenWindow)
         datemenuc = self.ui.actionChange_Date
         datemenuc.triggered.connect(lambda: self.ui.frameCal.show())
         
@@ -352,8 +435,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         CF.Config(configfile).Update('database',linedict)
         read_config()
         self.ui.frameConfig.hide()
-        self.setWindowTitle(f"MNSL Scores - Session {session} Started 
-                ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})")
+        self.setWindowTitle(f"""MNSL Scores - Session {session} Started 
+                ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})""")
 
 
     def closeconfig(self, e):
@@ -682,10 +765,12 @@ def LoadCompleters():
     window.ui.shooter.setCompleter(completer)
     window.ui.lnEditShooter.setCompleter(completer)
     editwindow.ui.lnEditScoreShooterName.setCompleter(completer)
+    SBS.ui.lnShooter.setCompleter(completer)
     calibers = loadcaliber()
     compl = QCompleter(calibers)
     compl.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
     window.ui.caliber.setCompleter(compl)
+
 
 def CheckDBConnection():
     try:
@@ -701,11 +786,14 @@ def main():
     global editwindow
     global viewwindow
     global scoredate
+    global SBS
+    
     newsession =''
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     editwindow = EditScoreWindow()
     viewwindow = ViewScoresWindow()
+    SBS = ScoresByShooter()
     current_date = QDate.currentDate()
     # converting QDate object to string
     scoredate = current_date.toString('yyyy-MM-dd')
