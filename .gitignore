@@ -4,3 +4,7 @@ dialog.ui
 Dialog.py
 .scores.py.swp
 *.swp
+EditShooterWindow.py
+MainWindow.py
+ViewScoresWindow.py
+ScoresByShooter.py
