@@ -1021,7 +1021,6 @@ color: rgb(0, 0, 0);</string>
    </widget>
    <zorder>errorlog</zorder>
    <zorder>history</zorder>
-   <zorder></zorder>
    <zorder>ButtRestart</zorder>
    <zorder>lblInfo</zorder>
    <zorder>gridLayoutWidget</zorder>
@@ -1068,7 +1067,6 @@ color: rgb(0, 0, 0);</string>
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionViewScores"/>
     <addaction name="actionconfig"/>
     <addaction name="actionScores_By_Shooter"/>
    </widget>

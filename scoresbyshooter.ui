@@ -157,6 +157,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>comboSBSDate</tabstop>
+  <tabstop>comboSession</tabstop>
+  <tabstop>lnShooter</tabstop>
+  <tabstop>ButtShowScores</tabstop>
+  <tabstop>tblScores</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

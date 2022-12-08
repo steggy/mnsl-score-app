@@ -468,13 +468,15 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         self.actionconfig.setFont(font)
         self.actionconfig.setObjectName("actionconfig")
+        self.actionScores_By_Shooter = QtWidgets.QAction(MainWindow)
+        self.actionScores_By_Shooter.setObjectName("actionScores_By_Shooter")
         self.menuFile.addAction(self.actionChoose_Session)
         self.menuEdit.addAction(self.actionPerson)
         self.menuEdit.addAction(self.actionScores)
         self.menuEdit.addAction(self.actionCalibers)
         self.menuDate.addAction(self.actionChange_Date)
-        self.menuView.addAction(self.actionViewScores)
         self.menuView.addAction(self.actionconfig)
+        self.menuView.addAction(self.actionScores_By_Shooter)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuDate.menuAction())
@@ -556,6 +558,7 @@ class Ui_MainWindow(object):
         self.actionViewScores.setText(_translate("MainWindow", "Scores"))
         self.actionconfig.setText(_translate("MainWindow", "config"))
         self.actionconfig.setShortcut(_translate("MainWindow", "Alt+C"))
+        self.actionScores_By_Shooter.setText(_translate("MainWindow", "Scores By Shooter"))
 
 
 if __name__ == "__main__":

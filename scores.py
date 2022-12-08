@@ -34,12 +34,9 @@ divdict = {"Open":1,"22":2,"Prod":3,"Revolver":4,"special":5}
 ################################################################################################
 # Convert UI to PyQt5 py file
 ################################################################################################
-#os.system("/usr/bin/pyuic5 -x mainwindow.ui -o MainWindow.py")
 os.system("pyuic5 -x mainwindow.ui -o MainWindow.py")
 os.system("pyuic5 -x editscore.ui -o EditScore.py")
-os.system("pyuic5 -x viewscoreswindow.ui -o ViewScoresWindow.py")
 os.system("pyuic5 -x scoresbyshooter.ui -o ScoresByShooter.py")
-#from MainWindow import Ui_MainWindow
 from MainWindow import *
 from EditScore import *
 from ViewScoresWindow import *
@@ -74,7 +71,6 @@ class CustomDialog(QDialog):
         self.buttonBox.rejected.connect(self.reject)
 
         self.layout = QVBoxLayout()
-        #message = QLabel("Something happened, is that OK?")
         self.msgbox = QLabel()
         self.layout.addWidget(self.msgbox)
         self.layout.addWidget(self.buttonBox)
@@ -89,6 +85,7 @@ class ScoresByShooter(QtWidgets.QMainWindow, Ui_ScoresByShooter):
         self.setFixedSize(915,600) 
     
         self.ui.ButtShowScores.clicked.connect(self.loadscores)
+        self.ui.ButtShowScores.keyPressEvent = self.loadscores
         self.ui.lblSession.setText("Crap")
         self.ui.comboSession.currentTextChanged.connect(self.on_session_changed)
     
@@ -101,10 +98,20 @@ class ScoresByShooter(QtWidgets.QMainWindow, Ui_ScoresByShooter):
         SBS.ui.comboSBSDate.clear()
         SBS.ui.comboSBSDate.addItem('')
         dtelist = list(map(lambda x : str(x['dte']), mnslq.MNSLQuery(configfile).FetchSessionDates(sess)))
-        #print(dtelist) 
         SBS.ui.comboSBSDate.addItems(dtelist)
 
     def loadscores(self, e):
+        if not e:
+            pass
+        else:
+            try:
+                if e.key() == QtCore.Qt.Key_Return or e.key() == QtCore.Qt.Key_Enter:
+                    pass
+                else:
+                    return
+            except:
+                print('No Key')
+                return
         self.ui.tblScores.setColumnWidth(2,220)
         self.ui.tblScores.clearContents()
         self.ui.tblScores.setRowCount(0)
@@ -135,7 +142,6 @@ class ScoresByShooter(QtWidgets.QMainWindow, Ui_ScoresByShooter):
         SBS.ui.comboSBSDate.clear() 
         SBS.ui.tblScores.clearContents()
         SBS.ui.tblScores.setRowCount(0)
-        #data = mnslq.MNSLQuery(configfile).FetchSessionDates(session)
         sessdict = mnslq.MNSLQuery(configfile).FetchSessionList()
         sesslist = list(map(lambda x : str(x['leaguenum']), sessdict))
         SBS.ui.comboSession.addItem('')
@@ -143,49 +149,13 @@ class ScoresByShooter(QtWidgets.QMainWindow, Ui_ScoresByShooter):
         
         SBS.ui.comboSBSDate.addItem('')
         dtelist = list(map(lambda x : str(x['dte']), mnslq.MNSLQuery(configfile).FetchSessionDates(session)))
-        #print(dtelist) 
-        #SBS.ui.comboSBSDate.addItems(dtelist)
-        #for i in data:
-        #    SBS.ui.comboSBSDate.addItem(str(i['dte']))
         SBS.ui.lblSession.setText(window.windowTitle()) 
         SBS.show()
-
-class ViewScoresWindow(QtWidgets.QMainWindow, Ui_ViewScoresWindow):
-    def __init__(self, *args, obj=None, **kwargs):
-        super(ViewScoresWindow, self).__init__(*args, **kwargs)
-        #self.setupUi(self)
-        self.ui = Ui_ViewScoresWindow()        
-        self.ui.setupUi(self)
-        self.setFixedSize(733,553) 
     
-        self.ui.ButtShowScores.clicked.connect(self.loadscores)
-    
-    def loadscores(self, e):
-        self.ui.tblScores.setColumnWidth(0,220)
-        self.ui.tblScores.clearContents()
-        self.ui.tblScores.setRowCount(0)
-        data = mnslq.MNSLQuery(configfile).FetchScoresByDate(viewwindow.ui.comboDate.currentText())
-        if len(data) < 1:
-            return
-        viewwindow.ui.tblScores.setRowCount(len(data))
-        tblindex = 0
-        for i in data:
-            viewwindow.ui.tblScores.setItem(tblindex,0,QtWidgets.QTableWidgetItem(str(i['name'])))
-            viewwindow.ui.tblScores.setItem(tblindex,1,QtWidgets.QTableWidgetItem(str(i['evt'])))
-            viewwindow.ui.tblScores.setItem(tblindex,2,QtWidgets.QTableWidgetItem(str(i['divv'])))
-            viewwindow.ui.tblScores.setItem(tblindex,3,QtWidgets.QTableWidgetItem(str(i['cal'])))
-            viewwindow.ui.tblScores.setItem(tblindex,4,QtWidgets.QTableWidgetItem(str(i['score'])))
-            tblindex +=1
+    def closeEvent(self, event):
+        self.ui.lnShooter.setText('')
+        event.accept()
 
-    def OpenViewScoresWindow(self):
-        viewwindow.ui.comboDate.clear()
-        viewwindow.ui.tblScores.clearContents()
-        viewwindow.ui.tblScores.setRowCount(0)
-        data = mnslq.MNSLQuery(configfile).FetchSessionDates(session)
-        for i in data:
-            viewwindow.ui.comboDate.addItem(str(i['dte']))
-        viewwindow.ui.lblSession.setText(window.windowTitle()) 
-        viewwindow.show()
 
 
 class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
@@ -256,10 +226,6 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
             scorelist.append(itemdict)
             itemdict = {}
         mnslq.MNSLQuery(configfile).UpdateScore(scorelist)
-        #for i in testq:
-        #    pass
-            #print(i)
-            #window.ui.history.append(i)
         
         self.ui.lblSelectedShooter.setStyleSheet("color: red")
         current_time = QTime.currentTime()
@@ -268,9 +234,6 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         label_time = current_time.toString('HH:mm:ss')
 
         self.ui.lblSelectedShooter.setText(self.ui.lblSelectedShooter.text() + ' Updated ' + label_time)
-        #cellitem = editwindow.ui.tblScores.item(0,2)
-        #print(cellitem.text())
-        
 
         #reload table at end
 
@@ -354,50 +317,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.setupUi(self)
         self.ui = Ui_MainWindow()        
         self.ui.setupUi(self)
-        self.scores = ViewScoresWindow(self)
         editmenup = self.ui.actionPerson
         editmenup.triggered.connect(self.SelectShooter)
         editmenus = self.ui.actionScores
         editmenus.triggered.connect(EditScoreWindow.OpenEditScoresWindow)
         editmenuc = self.ui.actionconfig
         editmenuc.triggered.connect(self.showconfig)
-        viewmenus = self.ui.actionViewScores
-        viewmenus.triggered.connect(ViewScoresWindow.OpenViewScoresWindow)
         viewmenusbs = self.ui.actionScores_By_Shooter
         viewmenusbs.triggered.connect(ScoresByShooter.OpenWindow)
         datemenuc = self.ui.actionChange_Date
         datemenuc.triggered.connect(lambda: self.ui.frameCal.show())
         
-
-        
-        #editmenup.addAction(editAction)
-        #shoot = get_shooters()
-        #stuff = ["apple","grace","steggy"]
-        #completer = QCompleter(stuff)
-        #self.ui.shooter.setCompleter(completer)
-        #self.ui.eventcomboBox.addItems(["PPC","Tyro","Rifle"])
         self.ui.eventcomboBox.addItems(list(eventdict))
-        #self.ui.divcomboBox.addItems(["Open","22","Prod","Revolver","Special"])
         self.ui.divcomboBox.addItems(list(divdict))
         self.ui.comboBoxGender.addItems(["Female","Male"])
 
         self.ui.divcomboBox.currentTextChanged.connect(self.check22)
-        #self.ui.saveButton.clicked.connect(self.savebuttclk)
         self.ui.saveButton.clicked.connect(self.ScoreSaveButt)
-        #self.ui.saveButton.keyPressEvent = self.savebuttent
         self.ui.saveButton.keyPressEvent = self.ScoreSaveButt
-       #ScoreSaveButt 
         self.ui.Buttokayerrormsg.keyPressEvent = self.closeerrorbox
         self.ui.Buttokayerrormsg.clicked.connect(self.closeerrorbox)
-        #self.ui.editpersonokayButton.keyPressEvent = self.openshooteredit
         self.ui.ButtSelectShooter.keyPressEvent = self.fillshooteredit
         self.ui.ButtSelectShooter.clicked.connect(self.fillshooteredit)
-        #self.ui.ButtEditShooterCancel.
-        #self.ui.lnEditShooter.focusInEvent(self.clearshooteredit)
         self.ui.ButtEditShooterCancel.keyPressEvent = self.CloseEditShooterBox
         self.ui.ButtEditShooterCancel.clicked.connect(self.CloseEditShooterBox)
         self.ui.ButtUpdateShooter.clicked.connect(self.updateshooter)
-
         self.ui.ButtConfigCancel.clicked.connect(self.closeconfig)
         self.ui.ButtConfigCancel.keyPressEvent = self.closeconfig
         self.ui.ButtConfigOkay.clicked.connect(self.SaveConfig)
@@ -562,8 +506,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def openshooteredit(self,e):
         self.ui.lnEditShooter.setFocus()
-        pass
-        #window.ui.divcomboBox
     
     def closeerrorbox(self,e):
         try:
@@ -691,7 +633,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def check22(self):
         if self.ui.divcomboBox.currentText() == '22':
             self.ui.caliber.setText('.22')
-            #self.ui.caliber.setFocus()
         else: 
             self.ui.caliber.setText('')    
     
@@ -700,9 +641,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.ui.frameEditShooter.move(100,80)
         window.ui.frameEditShooter.show()
     
-
-
-
 
 
 def get_shooters():
@@ -726,7 +664,6 @@ def read_config():
     configdict = dict(CF.Config(configfile).Fetch('database'))
     configlist = list(configdict.values())
     session = str(CF.Config(configfile).Fetch('session')[0][1])
-    
 
 
 def cancel_edit_shooter():
@@ -748,9 +685,6 @@ def adjustsession(ss):
     CF.Config(configfile).Update('session',dct)
     session = ss
     window.setWindowTitle(f"MNSL Scores - Session {session} Started ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})")
-
-
-    
 
 
 def restartapp():
@@ -792,7 +726,6 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     editwindow = EditScoreWindow()
-    viewwindow = ViewScoresWindow()
     SBS = ScoresByShooter()
     current_date = QDate.currentDate()
     # converting QDate object to string
@@ -800,58 +733,22 @@ def main():
     window.ui.lblInfo.setText("Score Date: " + scoredate)
     window.setFixedSize(900,700)
     window.ui.history.setFontFamily("monospace")
-    #window.ui.frameEditShooter.hide()
     window.ui.frameerrormsg.move(100,100)
     window.ui.frameConfig.move(100,100)
-    #window.ui.lblerrorboxmsg.setText('')
     window.ui.frameerrormsg.hide()
     window.ui.frameEditShooter.hide()
     window.ui.frameConfig.hide()
     window.ui.frameCal.hide()
     
-    #finSessionStart()
     
     window.show()
     read_config()
     if not CheckDBConnection():
         crap = input("DB Error!!!")
     window.setWindowTitle(f"MNSL Scores - Session {session} Started ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})")
-    #mnslq.MNSLQuery(configfile).FetchSessionStart()
     newsession = checksession()
-    
     LoadCompleters()
-    #editwindow.show()
-    
-    #window.ui.editpersoncancelButton.clicked.connect(cancel_edit_shooter)
     window.ui.ButtRestart.clicked.connect(restartapp)
-    #window.btnofficeon.clicked.connect(lambda: officelights('on'))
-    #window.btnofficeoff.clicked.connect(lambda: officelights('off'))
-    #window.btnkiton.clicked.connect(lambda: kitlights('on'))
-    #window.btnkitoff.clicked.connect(lambda: kitlights('off'))
-    #window.btnlivon.clicked.connect(lambda: livlights('on'))
-    #window.btnlivoff.clicked.connect(lambda: livlights('off'))
-    #window.btnmasteroff.clicked.connect(lambda: masterlights('off'))
-    #window.btnmasteron.clicked.connect(lambda: masterlights('on'))
-    #window.btngamelampon.clicked.connect(lambda: gamelights('on'))
-    #window.btngamelampoff.clicked.connect(lambda: gamelights('off'))
-    ##window.lblwater.setText(str(getwater()))
-    ##window.lblthermotemp.setText(str(getthermotemp()))
-    ##Call temp update
-    #getthermotemp()
-    #update_temp_timer = QTimer()
-    #update_temp_timer.timeout.connect(getthermotemp)
-    #update_temp_timer.start(61000)
-    ##Call water update
-    ##Call mobile temp
-    #getmobiletemp()
-    #update_mobile_temp_timer = QTimer()
-    #update_mobile_temp_timer.timeout.connect(getmobiletemp)
-    #update_mobile_temp_timer.start(60000)
-
-    #getwater()
-    #update_water_display = QTimer()
-    #update_water_display.timeout.connect(getwater)
-    #update_water_display.start(3600000)
     app.exec()
 
 if __name__ == '__main__':
