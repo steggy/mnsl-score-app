@@ -9,3 +9,4 @@ EditShooterWindow.py
 MainWindow.py
 ViewScoresWindow.py
 ScoresByShooter.py
+EditScore.py
