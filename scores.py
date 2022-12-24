@@ -39,7 +39,6 @@ os.system("pyuic5 -x editscore.ui -o EditScore.py")
 os.system("pyuic5 -x scoresbyshooter.ui -o ScoresByShooter.py")
 from MainWindow import *
 from EditScore import *
-from ViewScoresWindow import *
 from ScoresByShooter import *
 
 
@@ -88,6 +87,10 @@ class ScoresByShooter(QtWidgets.QMainWindow, Ui_ScoresByShooter):
         self.ui.ButtShowScores.keyPressEvent = self.loadscores
         self.ui.lblSession.setText("Crap")
         self.ui.comboSession.currentTextChanged.connect(self.on_session_changed)
+    
+    def keyPressEvent(self, event: QtGui.QKeyEvent):
+        print(chr(event.key()+ 73))
+
     
     def on_session_changed(self):
         if SBS.ui.comboSession.currentText() == '':
@@ -171,12 +174,15 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         self.ui.ButtSelect.clicked.connect(self.addscorerows)
         self.ui.ButtSelect.keyPressEvent = self.addscorerows
         self.ui.ButtCancel.clicked.connect(self.CloseEditScoresWindow)
+        self.ui.ButtCancel.clicked.connect(self.CloseEditScoresWindow)
+        self.ui.ButtCancel.keyPressEvent = self.CloseEditScoresWindow
         delegate = ReadOnlyDelegate(self.ui.tblScores)
         self.ui.tblScores.setItemDelegateForColumn(0, delegate)
         self.ui.tblScores.setItemDelegateForColumn(1, delegate)
         self.ui.tblScores.setItemDelegateForColumn(2, delegate)
         self.ui.ButtUpdate.clicked.connect(self.UpdateScores)
-
+        self.ui.tblScores.setColumnWidth(0,20)
+        self.ui.tblScores.setColumnWidth(1,20)
     
     
     def closeEvent(self, event):
@@ -258,7 +264,7 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         sdte = editwindow.ui.comboBoxDate.currentText()
         
         sid = mnslq.MNSLQuery(configfile).FetchShooterId(sname)
-        data = mnslq.MNSLQuery(configfile).FetchShooterScoresByDate(sid,sdte)
+        data = mnslq.MNSLQuery(configfile).FetchShooterScoresByDate(sid,session,sdte)
         editwindow.ui.lblSelectedShooter.clear()
         editwindow.ui.tblScores.clearContents()
         editwindow.ui.tblScores.setRowCount(0)
@@ -290,7 +296,18 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         editwindow.ui.lblSelectedShooter.setText(str(data[0]['shooterid']) + ' ' +  sname)
 
 
-    def CloseEditScoresWindow(self):
+    def CloseEditScoresWindow(self ,e):
+        if not e:
+            pass
+        else:
+            try:
+                if e.key() == QtCore.Qt.Key_Return or e.key() == QtCore.Qt.Key_Enter:
+                    pass
+                else:
+                    return
+            except:
+                print('No Key')
+                return
         self.ui.lnEditScoreShooterName.clear()
         self.ui.lblSelectedShooter.setText('')
         self.ui.tblScores.clearContents()
@@ -302,10 +319,14 @@ class EditScoreWindow(QtWidgets.QMainWindow, Ui_EditScoreWindow):
         editwindow.ui.lblSelectedShooter.setStyleSheet("color: black")
         editwindow.ui.lblSelectedShooter.setText('') 
         editwindow.ui.ButtUpdate.setEnabled(0)
-        data = mnslq.MNSLQuery(configfile).FetchSessionDates(session)
-        
-        for i in data:
-            editwindow.ui.comboBoxDate.addItem(str(i['dte']))
+        shooterlist = list(map(lambda x : str(x['name']),mnslq.MNSLQuery(configfile).FetchShooterIfScore(session)))
+        completer = QCompleter(shooterlist)
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        editwindow.ui.lnEditScoreShooterName.setCompleter(completer)
+
+        dtelist = list(map(lambda x : str(x['dte']), mnslq.MNSLQuery(configfile).FetchSessionDates(session)))
+        editwindow.ui.comboBoxDate.addItem('')  
+        editwindow.ui.comboBoxDate.addItems(dtelist)
         
         editwindow.ui.lblSession.setText(window.windowTitle()) 
         editwindow.show()
@@ -640,22 +661,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         window.ui.lnEditShooter.setFocus()
         window.ui.frameEditShooter.move(100,80)
         window.ui.frameEditShooter.show()
-    
 
-
-def get_shooters():
-    shooterlist = []
-    data = mnslq.MNSLQuery(configfile).FetchAllShooters()
-    for i in data:
-        shooterlist.append(i['name'])    
-    return shooterlist
-
-def loadcaliber():
-    caliberlist = []
-    data = mnslq.MNSLQuery(configfile).FetchCaliber()
-    for i in data:
-        caliberlist.append(i['name'])   
-    return caliberlist
 
 def read_config():
     global configlist
@@ -693,15 +699,14 @@ def restartapp():
 
 
 def LoadCompleters():
-    shoot = get_shooters()
-    completer = QCompleter(shoot)
+    shooterlist = list(map(lambda x : str(x['name']),mnslq.MNSLQuery(configfile).FetchAllShooters()))
+    completer = QCompleter(shooterlist)
     completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
     window.ui.shooter.setCompleter(completer)
     window.ui.lnEditShooter.setCompleter(completer)
-    editwindow.ui.lnEditScoreShooterName.setCompleter(completer)
     SBS.ui.lnShooter.setCompleter(completer)
-    calibers = loadcaliber()
-    compl = QCompleter(calibers)
+    caliberlist = list(map(lambda x : str(x['name']),mnslq.MNSLQuery(configfile).FetchCaliber()))
+    compl = QCompleter(caliberlist)
     compl.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
     window.ui.caliber.setCompleter(compl)
 

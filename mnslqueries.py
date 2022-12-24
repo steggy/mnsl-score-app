@@ -15,6 +15,13 @@ class MNSLQuery():
         result = self.db2.fetch(f"select * from shooters where concat(fname,' ',lname) = '{self.name}'")
         return result
     
+    def FetchShooterIfScore(self,sess):
+        sql=f"""select (select concat(fname,' ',lname) as name from shooters where shooterid=id) as name 
+        from scores where score > 0 and leaguenum={sess} group by name;"""
+        #result = self.db2.fetch(f"select * from shooters where concat(fname,' ',lname) = '{self.name}'")
+        result = self.db2.fetch(sql)
+        return result
+    
     def FetchShooterId(self,name):
         self.name = name
         result = self.db2.fetch(f"select id from shooters where concat(fname,' ',lname) = '{name}'")
@@ -23,10 +30,14 @@ class MNSLQuery():
         else:
             return result[0]['id']
 
-    def FetchShooterScoresByDate(self,sid,dte):
+    def FetchShooterScoresByDate(self,sid,sess,dte=None):
         #result = self.db2.fetch(f"select dte from scores where leaguenum = {sess} group by dte order by dte desc")
+        self.dte = dte
+        if len(self.dte) < 1:
+            self.dte = '%'
         sql = f"""select scores.id,shooterid,scores.dte,event.name as eventname,division.name as divname,cal,score 
-        from scores,event,division where shooterid = {sid} and dte ='{dte}' and scores.eid = event.id and scores.did=division.id;"""
+        from scores,event,division where shooterid = {sid} and dte like '{self.dte}' and leaguenum={sess} 
+        and scores.eid = event.id and scores.did=division.id order by id desc;"""
         result = self.db2.fetch(sql)
         return result
     

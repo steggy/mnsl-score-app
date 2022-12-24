@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>MNSL Score</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../mnsl/logo/b-card.png</normaloff>../../mnsl/logo/b-card.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTextBrowser" name="history">
     <property name="geometry">
