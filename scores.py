@@ -634,10 +634,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return 0
 
 
-    def DisplayErrorDialog(self,msg):
+    def DisplayErrorDialog(self,title,msg):
         ebox = CustomDialog(self)
         ebox.setStyleSheet("QLabel{font-size:20px;}")
-        ebox.setWindowTitle('Error!')
+        ebox.setWindowTitle(title)
         ebox.msgbox.setText(msg)
         ebox.setFixedSize(450,250)
         if ebox.exec_():
@@ -680,8 +680,16 @@ def checksession():
     lnum = mnslq.MNSLQuery(configfile).FetchSession()
     if int(lnum) > int(session):
         msg = f"Current session {session} found {lnum} okay to use found"
-        if window.DisplayErrorDialog(msg):
+        if window.DisplayErrorDialog('Achtung',msg):
             adjustsession(lnum)
+        return
+    wk = mnslq.MNSLQuery(configfile).Fetchweeks(session)
+    if int(wk) >=12:
+        msg = f"We might be done with session {session}\nShow config editor?"
+        
+        if window.DisplayErrorDialog('Achtung',msg):
+            # we need to update DB with new league start date
+            window.showconfig()
 
 
 def adjustsession(ss):

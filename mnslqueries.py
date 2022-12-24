@@ -49,7 +49,10 @@ class MNSLQuery():
     def FetchSession(self):
         result = self.db2.fetch(f"select leaguenum from scores group by leaguenum order by leaguenum desc limit 1;")
         return result[0]['leaguenum']
-    
+    def Fetchweeks(self,sess):
+        result = self.db2.fetch(f"select count(distinct dte) as tot from scores where leaguenum={sess};")
+        return result[0]['tot']
+
     def FetchSessionList(self):
         result = self.db2.fetch(f"select leaguenum from scores group by leaguenum order by leaguenum desc;")
         return result
