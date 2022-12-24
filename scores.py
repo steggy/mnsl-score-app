@@ -19,10 +19,13 @@ from PyQt5 import QtWidgets, uic, QtCore, QtGui
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QTimer, QTime, QDate
 
-configfile = "scores.conf"
+base = sys.path[0]
+#sys.exit()
+configfile = sys.path[0] + "/scores.conf"
 configdict = dict(CF.Config(configfile).Fetch('database'))
 configlist = list(configdict.values())
 session = str(CF.Config(configfile).Fetch('session')[0][1])
+ver = str(CF.Config(configfile).Fetch('version')[0][1])
 
 
 scoredate = ""
@@ -34,9 +37,9 @@ divdict = {"Open":1,"22":2,"Prod":3,"Revolver":4,"special":5}
 ################################################################################################
 # Convert UI to PyQt5 py file
 ################################################################################################
-os.system("pyuic5 -x mainwindow.ui -o MainWindow.py")
-os.system("pyuic5 -x editscore.ui -o EditScore.py")
-os.system("pyuic5 -x scoresbyshooter.ui -o ScoresByShooter.py")
+os.system("pyuic5 -x " + base + "/mainwindow.ui -o " + base + "/MainWindow.py")
+os.system("pyuic5 -x " + base + "/editscore.ui -o " + base + "/EditScore.py")
+os.system("pyuic5 -x " + base + "/scoresbyshooter.ui -o " + base + "/ScoresByShooter.py")
 from MainWindow import *
 from EditScore import *
 from ScoresByShooter import *
@@ -348,6 +351,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         viewmenusbs.triggered.connect(ScoresByShooter.OpenWindow)
         datemenuc = self.ui.actionChange_Date
         datemenuc.triggered.connect(lambda: self.ui.frameCal.show())
+        aboutmenu = self.ui.actionAbout
+        aboutmenu.triggered.connect(lambda: self.DisplayAboutDialog())
         
         self.ui.eventcomboBox.addItems(list(eventdict))
         self.ui.divcomboBox.addItems(list(divdict))
@@ -645,6 +650,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             return 0
     
+    def DisplayAboutDialog(self):
+        abox = CustomDialog(self)
+        abox.setStyleSheet("QLabel{font-size:18px;}")
+        abox.setWindowTitle("About This Thing")
+        msg = f"MNSL Score Keeper\n\nOct. 2022\nAuthor: Steggy\nver. {ver}\nA revamp of the Perl version"
+        msg += f"\nInspired by Ira Weiny\nThanks for playing\nGithub:\nhttps://github.com/steggy/mnsl-score-app.git"
+        abox.msgbox.setText(msg)
+        abox.setFixedSize(455,280)
+        abox.exec_()
+        #if abox.exec_():
+        #    return 1
+        #else:
+        #    return 0
+    
     def displayerror(self, msg):
         self.ui.errorlog.append(msg)
         self.ui.lblerrorboxmsg.setText(msg)
@@ -734,7 +753,6 @@ def main():
     global viewwindow
     global scoredate
     global SBS
-    
     newsession =''
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
