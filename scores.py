@@ -22,15 +22,41 @@ from PyQt5.QtCore import QTimer, QTime, QDate
 base = sys.path[0]
 #sys.exit()
 configfile = sys.path[0] + "/scores.conf"
-configdict = dict(CF.Config(configfile).Fetch('database'))
-configlist = list(configdict.values())
-session = str(CF.Config(configfile).Fetch('session')[0][1])
-ver = str(CF.Config(configfile).Fetch('version')[0][1])
+configdict = {}
+configlist = []
+session = ""
+ver = ""
 
 
 scoredate = ""
 eventdict = {"PPC":1,"Tyro":2,"Rifle":3}
 divdict = {"Open":1,"22":2,"Prod":3,"Revolver":4,"special":5}
+
+def init():
+    global configdict
+    global configlist
+    global session
+    global ver
+    try:
+        configdict = dict(CF.Config(configfile).Fetch('database'))
+        configlist = list(configdict.values())
+        session = str(CF.Config(configfile).Fetch('session')[0][1])
+        ver = str(CF.Config(configfile).Fetch('version')[0][1])
+    except Exception as e:
+        window.ui.errorlog.append("Something wrong with config file\n" + str(e))
+        return 0
+    try:
+        read_config()
+    except Exception as e:
+        window.ui.errorlog.append("Something went wrong with reading config\n" + str(e))
+        return 0        
+    if not CheckDBConnection():
+        window.ui.errorlog.append("Something went wrong with DataBase\n")
+        return 0
+    else:
+        return 1    
+
+
 
 
 
@@ -403,7 +429,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         sdict = {'session':self.ui.lnConfigSession.text()}
         CF.Config(configfile).Update('session',sdict)
         CF.Config(configfile).Update('database',linedict)
-        read_config()
+        result = init()
         self.ui.frameConfig.hide()
         self.setWindowTitle(f"""MNSL Scores - Session {session} Started 
                 ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})""")
@@ -606,13 +632,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #Check if shooter in DB
         if sid == 0:
             msg = f"Error:\nCannot find shooter '{shooter}' \nor \nDB issue\n\n Should we try to ADD shooter '{shooter}' "
-            if self.DisplayErrorDialog(msg):
+            if self.DisplayErrorDialog('New shooter',msg):
                 sid = self.AddShooter(shooter)
                 if sid > 0:
                     LoadCompleters()
                 else:
                     msg = "Something went Wrong!"
-                    self.DisplayErrorDialog(msg)
+                    self.DisplayErrorDialog('Error',msg)
                     return
             else:
                 return 0
@@ -631,7 +657,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def AddShooter(self, sname):
         if mnslq.MNSLQuery(configfile).AddShooter(sname):
             sid = mnslq.MNSLQuery(configfile).FetchShooterId(sname)
-            if len(sid) > 0 and sid != 0:
+            if sid > 0 and sid != 0:
                 return sid
             else:
                 return 0
@@ -741,6 +767,7 @@ def LoadCompleters():
 def CheckDBConnection():
     try:
         DB = mnslq.MNSLQuery(configfile)
+        null = mnslq.MNSLQuery(configfile).Fetchweeks(33)
         return 1
     except Exception as e:
         window.ui.errorlog.append(str(e))
@@ -772,13 +799,19 @@ def main():
     window.ui.frameCal.hide()
     
     
+    
     window.show()
-    read_config()
-    if not CheckDBConnection():
-        crap = input("DB Error!!!")
-    window.setWindowTitle(f"MNSL Scores - Session {session} Started ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})")
-    newsession = checksession()
-    LoadCompleters()
+    #init()
+    #read_config()
+    #if not CheckDBConnection():
+    #    crap = input("DB Error!!!")
+    if init():
+        window.setWindowTitle(f"MNSL Scores - Session {session} Started ({mnslq.MNSLQuery(configfile).FetchSessionStart()[0]['sstart']})")
+        newsession = checksession()
+        LoadCompleters()
+    else:
+         window.ui.errorlog.append("Init Failed!!\n")
+
     window.ui.ButtRestart.clicked.connect(restartapp)
     app.exec()
 
