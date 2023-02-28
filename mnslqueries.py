@@ -75,7 +75,7 @@ class MNSLQuery():
     
     def AddShooter(self,sname):
         sn = sname.split()
-        sql = f"insert into shooters (fname, lname) values ('{sn[0].title()}','{' '.join(sn[1:]).title()}')"
+        sql = f"insert into shooters (fname, lname,dte,staff) values ('{sn[0].title()}','{' '.join(sn[1:]).title()}',CURDATE(),0)"
         try:
             self.db2.execute(sql)
             return 1

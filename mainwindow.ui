@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1290</width>
-    <height>811</height>
+    <width>1449</width>
+    <height>819</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -311,67 +311,6 @@ background-color: rgb(252, 233, 79);</string>
      </property>
     </widget>
    </widget>
-   <widget class="QFrame" name="frameCal">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>195</y>
-      <width>506</width>
-      <height>266</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(211, 215, 207);</string>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Panel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <property name="lineWidth">
-     <number>5</number>
-    </property>
-    <widget class="QCalendarWidget" name="calendarWidget">
-     <property name="geometry">
-      <rect>
-       <x>25</x>
-       <y>25</y>
-       <width>456</width>
-       <height>171</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(114, 159, 207);</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="ButtGetDate">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>215</y>
-       <width>89</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="ButtCalCancel">
-     <property name="geometry">
-      <rect>
-       <x>385</x>
-       <y>215</y>
-       <width>89</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>CANCEL</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QTextBrowser" name="errorlog">
     <property name="geometry">
      <rect>
@@ -623,8 +562,8 @@ background-color: rgb(233, 185, 110);</string>
    <widget class="QFrame" name="frameEditShooter">
     <property name="geometry">
      <rect>
-      <x>15</x>
-      <y>180</y>
+      <x>725</x>
+      <y>185</y>
       <width>716</width>
       <height>566</height>
      </rect>
@@ -1022,14 +961,101 @@ color: rgb(0, 0, 0);</string>
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
     </widget>
+    <widget class="QFrame" name="frameCal">
+     <property name="geometry">
+      <rect>
+       <x>195</x>
+       <y>65</y>
+       <width>506</width>
+       <height>266</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(211, 215, 207);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
+     <widget class="QCalendarWidget" name="calendarWidget">
+      <property name="geometry">
+       <rect>
+        <x>25</x>
+        <y>25</y>
+        <width>456</width>
+        <height>171</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(114, 159, 207);</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ButtGetDate">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>215</y>
+        <width>89</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Select</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="ButtCalCancel">
+      <property name="geometry">
+       <rect>
+        <x>385</x>
+        <y>215</y>
+        <width>89</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CANCEL</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
+   <widget class="QLineEdit" name="lnInfoMsg">
+    <property name="geometry">
+     <rect>
+      <x>137</x>
+      <y>514</y>
+      <width>576</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Ubuntu Mono</family>
+      <pointsize>18</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(239, 41, 41);
+</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <zorder>lnInfoMsg</zorder>
    <zorder>errorlog</zorder>
    <zorder>history</zorder>
    <zorder>ButtRestart</zorder>
    <zorder>lblInfo</zorder>
    <zorder>gridLayoutWidget</zorder>
    <zorder>frameerrormsg</zorder>
-   <zorder>frameCal</zorder>
    <zorder>frameConfig</zorder>
    <zorder>frameEditShooter</zorder>
   </widget>
@@ -1038,7 +1064,7 @@ color: rgb(0, 0, 0);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1290</width>
+     <width>1449</width>
      <height>27</height>
     </rect>
    </property>
